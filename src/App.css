@@ -1,13 +1,17 @@
 .board{
   display: flex;
   flex-wrap: wrap;
-  height: 100vh;
+  /* height: 100vh; */
   background-color: darkgoldenrod;
+  justify-content: center;
+  gap: 32px;
+  padding: 32px 0;
 }
 .card{
   height: 300px;
   width: 250px;
   background-color:slategray;
+
 }
 /*
 #root {

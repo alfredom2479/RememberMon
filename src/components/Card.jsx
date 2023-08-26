@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 
-function Card({children}){
+function Card({children, onClick}){
 
   return(
-    <div className="card">
+    <div className="card" onClick={onClick}>
        <div className="img-container">
           Image
         </div> 
@@ -16,6 +16,7 @@ function Card({children}){
 }
 
 Card.propTypes ={
-  children : PropTypes.any
+  children : PropTypes.any,
+  onClick : PropTypes.func
 }
 export default Card;
