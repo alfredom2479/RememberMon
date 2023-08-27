@@ -1,4 +1,5 @@
 import {useState, useEffect} from "react";
+import axios from 'axios';
 import Card from './Card'
 
 
@@ -26,43 +27,40 @@ function Board(){
   const [pokeData, setPokeData] = useState([]);
 
   //console.log(selectedCards);
+  
+
+  useEffect(()=>{
+    let isMounted = true;
+    const fetchPokeData = async ()=>{
+      const pokeIds =[];
+      while(pokeIds.length < cards.length){
+        let nextId = Math.floor(Math.random()*151) +1;
+        if(!pokeIds.includes(nextId)) pokeIds.push(nextId);
+      }
+      const pokeAPIResults = await Promise.all(
+        pokeIds.map(id => fetchPokemon(id))
+      );
+      console.log(pokeAPIResults[0]);
+      if(isMounted){
+        setPokeData(pokeAPIResults);
+      }
+    };
+    fetchPokeData();
+    
+
+    return ()=>{
+      isMounted = false;
+    }
+  },[]);
+
   useEffect(()=>{
     randomizeCards();
   },[]);
-
-  useEffect(()=>{
-    //fetchPokeData();
-    let ignore = false;
-    const pokeIds = [];
-    while(pokeIds.length < cards.length){
-      let nextId = 0;
-      do{
-        nextId = Math.floor(Math.random()*151) +1;
-      }
-      while(pokeIds.includes(nextId));
-      pokeIds.push(nextId)
-    }
-    for(let i =0; i< pokeIds.length; i++){
-      fetch(`https://pokeapi.co/api/v2/pokemon/${pokeIds[i]}`)
-      .then(response =>{
-        return response.json()
-      })
-      .then(data=>{
-        if(!ignore ){
-          setPokeData([...pokeData,data]);
-          console.log("data: "+ data);
-        }
-      });
-    }
-    return  ()=>{
-      ignore = true;
-    }
-  },[]);
-
-  /*function fetchPokeData () {
-    
-    
-  }*/
+  
+  const fetchPokemon = async pokeId => {
+    const response =  await axios.get(`https://pokeapi.co/api/v2/pokemon/${pokeId}`);
+    return response.data;
+  };
 
   function randomizeCards(){
     const newCards = [];
@@ -98,17 +96,21 @@ function Board(){
   
   return(
     <>
-    <h1>Best Score: {bestScore}</h1>
-    <h1>Current Score: {score}</h1>
+    <div className="header">
+      <h1>Current Score: {score}</h1>
+      <h1>Best Score: {bestScore}</h1>
+    </div>
+    
     <div className="board">
       {cards.map((card)=>
-        <Card onClick={()=>handleClick(card.id)} key={card.id}>{card.image}</Card>
+        <Card 
+          onClick={()=>handleClick(card.id)} 
+          key={card.id}
+          pokeName={pokeData.length>0?pokeData[card.id].name : 'Loading...'}
+          pokeImgURI={pokeData.length>0?pokeData[card.id].sprites.other['official-artwork'].front_default : 'Loading...'}
+        />
       )} 
     </div>
-    {pokeData.map((poke)=>
-      console.log(poke.name)
-      //<h3 key={poke.name}>{poke.name}</h3> 
-    )}
     </>
     
   )

@@ -1,15 +1,16 @@
 import PropTypes from 'prop-types';
 
-function Card({children, onClick}){
+function Card({onClick,pokeName, pokeImgURI}){
 
+  console.log(pokeName);
   return(
     <div className="card" onClick={onClick}>
        <div className="img-container">
-          Image
+          <img src={pokeImgURI} alt={pokeName} height="200px"></img>
         </div> 
         <div className="name-container">
-          Name
-          {children}
+          {pokeName}
+          {/* {children} */}
         </div>
     </div>
   )
@@ -17,6 +18,8 @@ function Card({children, onClick}){
 
 Card.propTypes ={
   children : PropTypes.any,
-  onClick : PropTypes.func
+  onClick : PropTypes.func,
+  pokeName : PropTypes.string,
+  pokeImgURI : PropTypes.string 
 }
 export default Card;
